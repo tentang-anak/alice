@@ -8,7 +8,6 @@ import 'package:alice/model/alice_http_error.dart';
 import 'package:alice/model/alice_http_response.dart';
 import 'package:alice/model/alice_log.dart';
 import 'package:alice/ui/page/alice_calls_list_screen.dart';
-import 'package:alice/utils/shake_detector.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -18,10 +17,6 @@ class AliceCore {
   /// Should user be notified with notification if there's new request catched
   /// by Alice
   final bool showNotification;
-
-  /// Should inspector be opened on device shake (works only with physical
-  /// with sensors)
-  final bool showInspectorOnShake;
 
   /// Should inspector use dark theme
   final bool darkTheme;
@@ -49,7 +44,6 @@ class AliceCore {
   GlobalKey<NavigatorState>? navigatorKey;
   Brightness _brightness = Brightness.light;
   bool _isInspectorOpened = false;
-  ShakeDetector? _shakeDetector;
   StreamSubscription? _callsSubscription;
   String? _notificationMessage;
   String? _notificationMessageShown;
@@ -59,7 +53,6 @@ class AliceCore {
   AliceCore(
     this.navigatorKey, {
     required this.showNotification,
-    required this.showInspectorOnShake,
     required this.darkTheme,
     required this.notificationIcon,
     required this.maxCallsCount,
@@ -70,21 +63,12 @@ class AliceCore {
       _initializeNotificationsPlugin();
       _callsSubscription = callsSubject.listen((_) => _onCallsChanged());
     }
-    if (showInspectorOnShake) {
-      _shakeDetector = ShakeDetector.autoStart(
-        onPhoneShake: () {
-          navigateToCallListScreen();
-        },
-        shakeThresholdGravity: 4,
-      );
-    }
     _brightness = darkTheme ? Brightness.dark : Brightness.light;
   }
 
   /// Dispose subjects and subscriptions
   void dispose() {
     callsSubject.close();
-    _shakeDetector?.stopListening();
     _callsSubscription?.cancel();
   }
 
@@ -95,14 +79,14 @@ class AliceCore {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     final initializationSettingsAndroid =
         AndroidInitializationSettings(notificationIcon);
-    const initializationSettingsIOS = DarwinInitializationSettings();
+    const initializationSettingsIOS = IOSInitializationSettings();
     final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
     _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: _onDidReceiveNotificationResponse,
+      onSelectNotification: _onSelectedNotification,
     );
   }
 
@@ -117,9 +101,8 @@ class AliceCore {
     }
   }
 
-  Future<void> _onDidReceiveNotificationResponse(
-      NotificationResponse response) async {
-    assert(response.payload != null, "payload can't be null");
+  Future<void> _onSelectedNotification(String? payload) async {
+    assert(payload != null, "payload can't be null");
     navigateToCallListScreen();
     return;
   }
@@ -223,8 +206,11 @@ class AliceCore {
       playSound: false,
       largeIcon: DrawableResourceAndroidBitmap(notificationIcon),
     );
-    const iOSPlatformChannelSpecifics =
-        DarwinNotificationDetails(presentSound: false);
+    const iOSPlatformChannelSpecifics = IOSNotificationDetails(
+        presentSound: false,
+        presentAlert: true,
+        presentBadge: false,
+        threadIdentifier: 'thread_id');
     final platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,

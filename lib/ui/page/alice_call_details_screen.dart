@@ -65,19 +65,43 @@ class _AliceCallDetailsScreenState extends State<AliceCallDetailsScreen>
       length: 4,
       child: Scaffold(
         floatingActionButton: widget.core.showShareButton == true
-            ? FloatingActionButton(
-                backgroundColor: AliceConstants.lightRed,
-                key: const Key('share_key'),
-                onPressed: () async {
-                  Share.share(
-                    await _getSharableResponseString(),
-                    subject: 'Request Details',
-                  );
-                },
-                child: Icon(
-                  Icons.share,
-                  color: AliceConstants.white,
-                ),
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    backgroundColor: AliceConstants.lightRed,
+                    heroTag: 'share_curl_tag',
+                    key: const Key('share_curl_key'),
+                    onPressed: () async {
+                      Share.share(
+                        await _getSharableCurlResponseString(),
+                        subject: 'Curl Details',
+                      );
+                    },
+                    child: Text(
+                      'curl',
+                      style: TextStyle(
+                        color: AliceConstants.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FloatingActionButton(
+                    backgroundColor: AliceConstants.lightRed,
+                    heroTag: 'share_tag',
+                    key: const Key('share_key'),
+                    onPressed: () async {
+                      Share.share(
+                        await _getSharableResponseString(),
+                        subject: 'Request Details',
+                      );
+                    },
+                    child: Icon(
+                      Icons.share,
+                      color: AliceConstants.white,
+                    ),
+                  ),
+                ],
               )
             : null,
         appBar: AppBar(
@@ -100,6 +124,10 @@ class _AliceCallDetailsScreenState extends State<AliceCallDetailsScreen>
 
   Future<String> _getSharableResponseString() async {
     return AliceSaveHelper.buildCallLog(widget.call);
+  }
+
+  Future<String> _getSharableCurlResponseString() async {
+    return AliceSaveHelper.buildCallCurl(widget.call);
   }
 
   List<Widget> _getTabBars() {

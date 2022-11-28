@@ -8,7 +8,6 @@ import 'package:alice/helper/alice_conversion_helper.dart';
 import 'package:alice/model/alice_http_call.dart';
 import 'package:alice/utils/alice_parser.dart';
 import 'package:flutter/material.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -92,9 +91,8 @@ class AliceSaveHelper {
           context,
           "Success",
           "Successfully saved logs in ${file.path}",
-          secondButtonTitle: isAndroid ? "View file" : null,
-          secondButtonAction: () =>
-              isAndroid ? OpenFilex.open(file.path) : null,
+          secondButtonTitle: null,
+          secondButtonAction: null,
           brightness: brightness,
         );
         return file.path;
@@ -201,11 +199,25 @@ class AliceSaveHelper {
     return stringBuffer.toString();
   }
 
+  static String _buildCallCurl(AliceHttpCall call) {
+    final StringBuffer stringBuffer = StringBuffer();
+    stringBuffer.write(call.getCurlCommand());
+    return stringBuffer.toString();
+  }
+
   static Future<String> buildCallLog(AliceHttpCall call) async {
     try {
       return await _buildAliceLog() + _buildCallLog(call);
     } catch (exception) {
       return "Failed to generate call log";
+    }
+  }
+
+  static Future<String> buildCallCurl(AliceHttpCall call) async {
+    try {
+      return await _buildCallCurl(call);
+    } catch (exception) {
+      return "Failed to generate curl";
     }
   }
 }
