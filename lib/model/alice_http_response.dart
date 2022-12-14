@@ -4,4 +4,5 @@ class AliceHttpResponse {
   DateTime time = DateTime.now();
   dynamic body;
   Map<String, String>? headers;
+  dynamic type;
 }

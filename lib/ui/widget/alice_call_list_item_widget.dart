@@ -2,6 +2,7 @@ import 'package:alice/helper/alice_conversion_helper.dart';
 import 'package:alice/model/alice_http_call.dart';
 import 'package:alice/model/alice_http_response.dart';
 import 'package:alice/utils/alice_constants.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 const _endpointMaxLines = 10;
@@ -197,6 +198,9 @@ class AliceCallListItemWidget extends StatelessWidget {
 
   String _getStatus(AliceHttpResponse response) {
     if (response.status == -1) {
+      if (response.type == DioErrorType.cancel) {
+        return "CANCEL";
+      }
       return "ERR";
     } else if (response.status == 0) {
       return "???";

@@ -127,6 +127,7 @@ class AliceDioInterceptor extends InterceptorsWrapper {
     aliceCore.addError(httpError, error.requestOptions.hashCode);
     final httpResponse = AliceHttpResponse();
     httpResponse.time = DateTime.now();
+    httpResponse.type = error.type;
     if (error.response == null) {
       httpResponse.status = -1;
       aliceCore.addResponse(httpResponse, error.requestOptions.hashCode);
