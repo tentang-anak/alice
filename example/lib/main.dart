@@ -218,6 +218,7 @@ class _MyAppState extends State<MyApp> {
         data: formData);
 
     _dio.get<void>("http://dummy.restapiexample.com/api/v1/employees");
+    _dio.get<void>("https://jsonplaceholder.typicode.com/photos?data=123&param=543");
   }
 
   void _runHttpHttpRequests() async {
