@@ -76,16 +76,16 @@ class AliceDioInterceptor extends InterceptorsWrapper {
     request.time = DateTime.now();
     request.headers = <String, dynamic>{...options.headers};
     request.contentType = options.contentType.toString();
-    request.queryParameters = <String, dynamic>{...options.queryParameters};
-
-    if (uri.queryParameters.isNotEmpty) {
-      request.queryParameters.addAll(uri.queryParameters);
-    }
+    request.queryParameters = <String, dynamic>{
+      ...uri.queryParameters,
+      ...options.queryParameters
+    };
 
     call.request = request;
     call.response = AliceHttpResponse();
 
     aliceCore.addCall(call);
+
     handler.next(options);
   }
 
