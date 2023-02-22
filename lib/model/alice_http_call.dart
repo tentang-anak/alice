@@ -47,7 +47,7 @@ class AliceHttpCall {
     }
 
     final queryParamMap = request!.queryParameters;
-    final queryParams = Uri(
+    String queryParams = Uri(
       queryParameters: queryParamMap.map<String, dynamic>(
         (key, dynamic value) {
           if (value is List) {
@@ -57,6 +57,10 @@ class AliceHttpCall {
         },
       ),
     ).toString();
+
+    if (queryParams == "?") {
+      queryParams = "";
+    }
 
     // If server already has http(s) don't add it again
     if (server.contains("http://") || server.contains("https://")) {
