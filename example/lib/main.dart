@@ -223,9 +223,11 @@ class _MyAppState extends State<MyApp> {
     _dio.get<void>(
       "https://jsonplaceholder.typicode.com/photos?data=123&param=543",
       queryParameters: <String, dynamic>{
+        'page': 1,
+        'limit': 25,
         'collectionId[]': [
-          'qewr123rqwer',
-          '1234567890',
+          '1785f2c6-fad2-448d-a638-e34c46d4fb8a',
+          '3ab255b5-73f9-4364-bd8e-6c55f9768eb7'
         ]
       },
     );
