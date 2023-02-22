@@ -47,18 +47,7 @@ class AliceHttpCall {
     }
 
     final queryParamMap = request!.queryParameters;
-    int paramCount = queryParamMap.keys.length;
-    var queryParams = "";
-    if (paramCount > 0) {
-      queryParams += "?";
-      queryParamMap.forEach((key, dynamic value) {
-        queryParams += '$key=$value';
-        paramCount -= 1;
-        if (paramCount > 0) {
-          queryParams += "&";
-        }
-      });
-    }
+    final queryParams = Uri(queryParameters: queryParamMap).toString();
 
     // If server already has http(s) don't add it again
     if (server.contains("http://") || server.contains("https://")) {
