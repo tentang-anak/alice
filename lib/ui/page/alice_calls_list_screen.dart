@@ -57,7 +57,7 @@ class _AliceCallsListScreenState extends State<AliceCallsListScreen>
       length: _tabItems.length,
       initialIndex: _tabItems.first.index,
     );
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabController?.addListener(() {
         _onTabChanged(_tabController!.index);
       });
