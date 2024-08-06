@@ -79,14 +79,19 @@ class AliceCore {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     final initializationSettingsAndroid =
         AndroidInitializationSettings(notificationIcon);
-    const initializationSettingsIOS = IOSInitializationSettings();
+    const initializationSettingsIOS = DarwinInitializationSettings();
     final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
     _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: _onSelectedNotification,
+      onDidReceiveBackgroundNotificationResponse: (data) async {
+        _onSelectedNotification(data.payload);
+      },
+      onDidReceiveNotificationResponse: (data) {
+        _onSelectedNotification(data.payload);
+      }
     );
   }
 
@@ -206,7 +211,7 @@ class AliceCore {
       playSound: false,
       largeIcon: DrawableResourceAndroidBitmap(notificationIcon),
     );
-    const iOSPlatformChannelSpecifics = IOSNotificationDetails(
+    const iOSPlatformChannelSpecifics = DarwinNotificationDetails(
         presentSound: false,
         presentAlert: true,
         presentBadge: false,
