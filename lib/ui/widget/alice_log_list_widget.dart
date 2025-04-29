@@ -65,7 +65,7 @@ class AliceLogEntryWidget extends StatelessWidget {
         children: [
           TextSpan(
             text: formattedTimestamp,
-            style: textTheme.caption!.copyWith(
+            style: textTheme.labelSmall?.copyWith(
               color: color.withOpacity(0.6),
               fontFeatures: [FontFeature.tabularFigures()],
             ),
@@ -122,7 +122,6 @@ class AliceLogEntryWidget extends StatelessWidget {
   }
 
   Color _getTextColor(BuildContext context) {
-    final theme = Theme.of(context);
     switch (log.level) {
       case DiagnosticLevel.hidden:
         return Colors.grey;
@@ -139,7 +138,7 @@ class AliceLogEntryWidget extends StatelessWidget {
       case DiagnosticLevel.summary:
         return Colors.black;
       case DiagnosticLevel.error:
-        return theme.errorColor;
+        return Colors.red;
       case DiagnosticLevel.off:
         return Colors.purple;
     }
